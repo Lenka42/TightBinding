@@ -1,0 +1,31 @@
+import matplotlib.pyplot as plt
+
+
+class Plotter(object):
+    def __init__(self, input_file):
+        self.input_file = input_file
+
+    def plot_energy_bands_from_file(self):
+        k_mesh = []
+        energies = []
+        first_line = True  # lena krivorukaja
+        n = 0
+        with open(self.input_file, 'r') as data:
+            txt = data.read().strip().split('\n')
+            for line in txt:
+                n += 1
+                lst = line.split(' ')
+                k_mesh.append([lst[0], lst[1], lst[2]])
+                for i, en in enumerate(lst[3:]):
+                    if first_line:
+                        energies.append([en, ])
+                    else:
+                        energies[i].append(en)
+                first_line = False
+        x = range(n)
+        print x
+        print energies
+
+        for band in energies:
+            plt.plot(x, band)
+        plt.show()
