@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import os
 
 
 class Plotter(object):
@@ -10,7 +11,8 @@ class Plotter(object):
         energies = []
         first_line = True  # lena krivorukaja
         n = 0
-        with open(self.input_file, 'r') as data:
+        with open(os.path.join(os.path.abspath('./outputs/'), self.input_file), 'r')\
+                as data:
             txt = data.read().strip().split('\n')
             for line in txt:
                 n += 1
@@ -19,13 +21,14 @@ class Plotter(object):
                 for i, en in enumerate(lst[3:]):
                     if first_line:
                         energies.append([en, ])
+                        first_line = False
                     else:
                         energies[i].append(en)
-                first_line = False
+
         x = range(n)
-        print x
-        print energies
 
         for band in energies:
             plt.plot(x, band)
+            plt.savefig(os.path.join(os.path.abspath('./output_images/'),
+                                     self.input_file + '.eps'))
         plt.show()

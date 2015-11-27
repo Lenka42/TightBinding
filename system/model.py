@@ -2,10 +2,12 @@ from numpy import zeros, complex_
 from numpy.linalg import norm, eigvalsh
 from collections import defaultdict
 from itertools import izip
+import os
 
 
 class System(object):
     def __init__(self, vectors):
+        self.name = ''
         self.spin_multiplier = 1
         self.vectors = vectors
         self.atoms = None
@@ -35,6 +37,7 @@ class System(object):
                 if at != at_idx:
                     if norm(v - vec) <= alpha * min_dst:
                         self.nn_dict[at_idx].append((at, vec - v))
+        print self.nn_dict
 
     def assign_start_indexes_to_atoms(self):
         start_idx = 0
@@ -59,15 +62,11 @@ class System(object):
             self.k_mesh += loc_k_mesh
         print len(self.k_mesh)
 
-
-
-
-
-
-    def just_do_main_magic(self, file_name):
+    def just_do_main_magic(self):
         self.find_nearest_neighbours()
         self.assign_start_indexes_to_atoms()
-        with open(file_name, 'w') as output_f:
+        with open(os.path.join(os.path.abspath('./outputs/'), self.name), 'w')\
+                as output_f:
             for k in self.k_mesh:
                 self.H = zeros((self.H_matrix_dim * self.spin_multiplier,
                                 self.H_matrix_dim * self.spin_multiplier),
@@ -81,5 +80,5 @@ class System(object):
                                                                self.parameters,
                                                                self.H)
                 energies = eigvalsh(self.H)
-                output_f.write(' '.join(map(str, k) + map(str, energies))
-                               + '\n')
+                output_f.write(' '.join(map(str, k) + map(str, energies)) +
+                               '\n')
