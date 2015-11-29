@@ -18,11 +18,12 @@ class Plotter(object):
                 n += 1
                 lst = line.split(' ')
                 k_mesh.append([lst[0], lst[1], lst[2]])
-                for i, en in enumerate(lst[3:]):
-                    if first_line:
+                if first_line:
+                    for i, en in enumerate(lst[3:]):
                         energies.append([en, ])
-                        first_line = False
-                    else:
+                    first_line = False
+                else:
+                    for i, en in enumerate(lst[3:]):
                         energies[i].append(en)
 
         x = range(n)
@@ -32,3 +33,4 @@ class Plotter(object):
             plt.savefig(os.path.join(os.path.abspath('./output_images/'),
                                      self.input_file + '.eps'))
         plt.show()
+
