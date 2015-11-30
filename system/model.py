@@ -72,13 +72,17 @@ class System(object):
                                 self.H_matrix_dim * self.spin_multiplier),
                                dtype=complex_)
                 for atom_idx, atom in enumerate(self.atoms):
-                    atom.count_diagonal_matrix_elements(self.parameters, self.H)
+                    atom.count_diagonal_matrix_elements(self.parameters,
+                                                        self.H,
+                                                        mult=self.spin_multiplier)
                     for neighbour_atom_idx, r in self.nn_dict[atom_idx]:
                         neighbour_atom = self.atoms[neighbour_atom_idx]
                         atom.count_hamiltonian_matrix_elements(neighbour_atom,
                                                                r, k,
                                                                self.parameters,
-                                                               self.H)
+                                                               self.H,
+                                                               mult=self.spin_multiplier)
+                print self.H
                 energies = eigvalsh(self.H)
                 output_f.write(' '.join(map(str, k) + map(str, energies)) +
                                '\n')
