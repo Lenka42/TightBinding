@@ -16,7 +16,7 @@ system.k_points = [array([0., 0., 0.]),
                    array([pi / a, -pi / sqrt(3) / a, 0]),
                    array([4 * pi / 3 / a, 0, 0]),
                    array([0., 0., 0.])]
-system.make_k_mesh(20)
+system.make_k_mesh(100)
 system.parameters = {
     'C': {
         'ep': 1.2057,
@@ -36,7 +36,7 @@ system.parameters = {
 
 
 for i in xrange(len(system.atoms)):
-    system.atoms[i].orbitals = ['pz']#, 'dxz', 'dyz']
+    system.atoms[i].orbitals = ['pz', 'dxz', 'dyz']
 
 
 system.just_do_main_magic()

@@ -43,7 +43,7 @@ class System(object):
         start_idx = 0
         for atom in self.atoms:
             atom.start_idx = start_idx
-            start_idx += len(atom.orbitals)
+            start_idx += len(atom.orbitals) * self.spin_multiplier
         self.H_matrix_dim = start_idx
 
     def make_k_mesh(self, n):
@@ -68,8 +68,8 @@ class System(object):
         with open(os.path.join(os.path.abspath('./outputs/'), self.name), 'w')\
                 as output_f:
             for k in self.k_mesh:
-                self.H = zeros((self.H_matrix_dim * self.spin_multiplier,
-                                self.H_matrix_dim * self.spin_multiplier),
+                self.H = zeros((self.H_matrix_dim,
+                                self.H_matrix_dim),
                                dtype=complex_)
                 for atom_idx, atom in enumerate(self.atoms):
                     atom.count_diagonal_matrix_elements(self.parameters,
@@ -82,7 +82,7 @@ class System(object):
                                                                self.parameters,
                                                                self.H,
                                                                mult=self.spin_multiplier)
-                print self.H
+                #print self.H
                 energies = eigvalsh(self.H)
                 output_f.write(' '.join(map(str, k) + map(str, energies)) +
                                '\n')

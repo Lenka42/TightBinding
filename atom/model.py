@@ -63,7 +63,6 @@ class Atom(object):
                   self.start_idx + dxz_idx * mult + 1] = \
                     - parameters[self.name]['lambda']
 
-
     def count_hamiltonian_matrix_elements(self, other, r, k, parameters, H, mult=1):
         params = parameters[self.name + other.name]
         params.update({'nx': r[0] / norm(r),
@@ -76,3 +75,7 @@ class Atom(object):
                 num2 = Atom.default_orbitals.index(orbital2)
                 H[self.start_idx + idx1 * mult, other.start_idx + idx2 * mult]\
                     += HOPPING_INTEGRALS[num1][num2].subs(params) * phase
+                if mult == 2:
+                    H[self.start_idx + idx1 * mult + 1,
+                      other.start_idx + idx2 * mult + 1] += \
+                        HOPPING_INTEGRALS[num1][num2].subs(params) * phase
