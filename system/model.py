@@ -21,7 +21,7 @@ class System(object):
 
     #TODO: cool k-d tree algorithm and second nearest neighbours
     def find_nearest_neighbours(self):
-        alpha = 1.2
+        alpha = 1.5
         atom_lst = [(i, a.r) for i, a in enumerate(self.atoms)]
         big_atom_lst = [(i, a.r) for i, a in enumerate(self.atoms)]
         for tr_idx, translation in enumerate(self.vectors):
@@ -34,9 +34,9 @@ class System(object):
                 if at != at_idx:
                     min_dst = min(min_dst, norm(v - vec))
             for at, vec in big_atom_lst:
-                if at != at_idx:
-                    if norm(v - vec) <= alpha * min_dst:
-                        self.nn_dict[at_idx].append((at, vec - v))
+                # if at != at_idx:
+                if norm(v - vec) <= alpha * min_dst and norm(v - vec) != 0.0:
+                    self.nn_dict[at_idx].append((at, vec - v))
         print self.nn_dict
 
     def assign_start_indexes_to_atoms(self):
