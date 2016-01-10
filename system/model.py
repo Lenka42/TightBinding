@@ -18,6 +18,9 @@ class System(object):
         self.H_matrix_dim = None
         self.H = None
         self.k_points = None
+        self.orthogonal_orbitals = True
+        self.S = None
+        self.s_parameters = None
 
     #TODO: cool k-d tree algorithm and second nearest neighbours
     def find_nearest_neighbours(self):
@@ -67,22 +70,54 @@ class System(object):
         self.assign_start_indexes_to_atoms()
         with open(os.path.join(os.path.abspath('./outputs/'), self.name), 'w')\
                 as output_f:
-            for k in self.k_mesh:
-                self.H = zeros((self.H_matrix_dim,
-                                self.H_matrix_dim),
-                               dtype=complex_)
-                for atom_idx, atom in enumerate(self.atoms):
-                    atom.count_diagonal_matrix_elements(self.parameters,
-                                                        self.H,
-                                                        mult=self.spin_multiplier)
-                    for neighbour_atom_idx, r in self.nn_dict[atom_idx]:
-                        neighbour_atom = self.atoms[neighbour_atom_idx]
-                        atom.count_hamiltonian_matrix_elements(neighbour_atom,
-                                                               r, k,
-                                                               self.parameters,
-                                                               self.H,
-                                                               mult=self.spin_multiplier)
-                #print self.H
-                energies = eigvalsh(self.H)
-                output_f.write(' '.join(map(str, k) + map(str, energies)) +
-                               '\n')
+            if self.orthogonal_orbitals:
+                for k in self.k_mesh:
+                    self.H = zeros((self.H_matrix_dim,
+                                    self.H_matrix_dim),
+                                   dtype=complex_)
+                    for atom_idx, atom in enumerate(self.atoms):
+                        atom.count_diagonal_matrix_elements(self.parameters,
+                                                            self.H,
+                                                            mult=self.spin_multiplier)
+                        for neighbour_atom_idx, r in self.nn_dict[atom_idx]:
+                            neighbour_atom = self.atoms[neighbour_atom_idx]
+                            atom.count_hamiltonian_matrix_elements(neighbour_atom,
+                                                                   r, k,
+                                                                   self.parameters,
+                                                                   self.H,
+                                                                   mult=self.spin_multiplier)
+                    #print self.H
+                    energies = eigvalsh(self.H)
+                    output_f.write(' '.join(map(str, k) + map(str, energies)) +
+                                   '\n')
+            else:
+                for k in self.k_mesh:
+                    self.H = zeros((self.H_matrix_dim,
+                                    self.H_matrix_dim),
+                                   dtype=complex_)
+                    self.S = zeros((self.H_matrix_dim,
+                                    self.H_matrix_dim),
+                                   dtype=complex_)
+                    for atom_idx, atom in enumerate(self.atoms):
+                        atom.count_diagonal_matrix_elements(self.parameters,
+                                                            self.H,
+                                                            mult=self.spin_multiplier)
+                        atom.count_diagonal_matrix_elements(self.s_parameters,
+                                                            self.S,
+                                                            mult=self.spin_multiplier)
+                        for neighbour_atom_idx, r in self.nn_dict[atom_idx]:
+                            neighbour_atom = self.atoms[neighbour_atom_idx]
+                            atom.count_hamiltonian_matrix_elements(neighbour_atom,
+                                                                   r, k,
+                                                                   self.parameters,
+                                                                   self.H,
+                                                                   mult=self.spin_multiplier)
+                            atom.count_hamiltonian_matrix_elements(neighbour_atom,
+                                                                   r, k,
+                                                                   self.s_parameters,
+                                                                   self.S,
+                                                                   mult=self.spin_multiplier)
+                    #print self.H
+                    energies = eigvalsh(self.H, self.S)
+                    output_f.write(' '.join(map(str, k) + map(str, energies)) +
+                                   '\n')
