@@ -6,16 +6,18 @@ from plotter.plotter import Plotter
 #############################GRAPHENE###################################
 a = 1.
 system = System([a / 2. * array([1., sqrt(3), 0.]),
-                 a / 2. * array([- 1., sqrt(3), 0.])])
+                 a / 2. * array([- 1., sqrt(3), 0.])], mode='with_vectors')
 system.name = 'graphene_sp'
 system.atoms = [Atom('C', array([0., a / sqrt(3), 0.])),
                 Atom('C', array([0., 2 * a / sqrt(3), 0.])),
                 ]
+
+system.num_of_bands = 4
 system.k_points = [array([0., 0., 0.]),
                    array([pi / a, -pi / sqrt(3) / a, 0]),
                    array([4 * pi / 3 / a, 0, 0]),
                    array([0., 0., 0.])]
-system.make_k_mesh(100)
+system.make_k_mesh(50)
 system.parameters = {
     'C': {
         'es': 0,

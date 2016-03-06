@@ -1,4 +1,4 @@
-from numpy import zeros, complex_
+from numpy import zeros, complex_, absolute, transpose
 from numpy.linalg import norm
 from scipy.linalg import eigvalsh
 from scipy.sparse.linalg import eigsh
@@ -8,7 +8,13 @@ import os
 
 
 class System(object):
-    def __init__(self, vectors):
+    _main_methods_dict = {
+        'with_vectors': 'f_with_vectors',
+        'with_overlap': 'f_with_overlap',
+        'standard': 'f',
+    }
+
+    def __init__(self, vectors, mode='standard'):
         self.name = ''
         self.spin_multiplier = 1
         self.vectors = vectors
@@ -20,11 +26,10 @@ class System(object):
         self.H_matrix_dim = None
         self.H = None
         self.k_points = None
-        self.orthogonal_orbitals = True
         self.S = None
         self.s_parameters = None
-        self.with_eigenvectors = False
         self.num_of_bands = None
+        self.just_do_main_magic = getattr(self, self._main_methods_dict[mode])
 
     # TODO: cool k-d tree algorithm and second nearest neighbours
     def find_nearest_neighbours(self):
@@ -70,90 +75,109 @@ class System(object):
             self.k_mesh += loc_k_mesh
         #print len(self.k_mesh)
 
-    def just_do_main_magic(self):
+    def f(self):
         self.find_nearest_neighbours()
         self.assign_start_indexes_to_atoms()
-        with open(os.path.join(os.path.abspath('./outputs/'), self.name), 'w')\
+        with open(os.path.join(os.path.abspath('./outputs/'), self.name), 'w') \
                 as output_f:
-            if not self.orthogonal_orbitals and self.with_eigenvectors:
-                raise AssertionError("You want definitely too much!")
-            if self.orthogonal_orbitals and not self.with_eigenvectors:
-                for k in self.k_mesh:
-                    self.H = zeros((self.H_matrix_dim,
-                                    self.H_matrix_dim),
-                                   dtype=complex_)
-                    for atom_idx, atom in enumerate(self.atoms):
-                        atom.count_diagonal_matrix_elements(
+            for k in self.k_mesh:
+                self.H = zeros((self.H_matrix_dim,
+                                self.H_matrix_dim),
+                               dtype=complex_)
+                for atom_idx, atom in enumerate(self.atoms):
+                    atom.count_diagonal_matrix_elements(
+                        self.parameters,
+                        self.H,
+                        mult=self.spin_multiplier)
+                    for neighbour_atom_idx, r in self.nn_dict[atom_idx]:
+                        neighbour_atom = self.atoms[neighbour_atom_idx]
+                        atom.count_hamiltonian_matrix_elements(
+                            neighbour_atom,
+                            r, k,
                             self.parameters,
                             self.H,
                             mult=self.spin_multiplier)
-                        for neighbour_atom_idx, r in self.nn_dict[atom_idx]:
-                            neighbour_atom = self.atoms[neighbour_atom_idx]
-                            atom.count_hamiltonian_matrix_elements(
-                                neighbour_atom,
-                                r, k,
-                                self.parameters,
-                                self.H,
-                                mult=self.spin_multiplier)
-                    # print self.H
-                    energies = eigvalsh(self.H)
-                    output_f.write(' '.join(map(str, k) + map(str, energies)) +
-                                   '\n')
-            elif not self.orthogonal_orbitals:
-                for k in self.k_mesh:
-                    self.H = zeros((self.H_matrix_dim,
-                                    self.H_matrix_dim),
-                                   dtype=complex_)
-                    self.S = zeros((self.H_matrix_dim,
-                                    self.H_matrix_dim),
-                                   dtype=complex_)
-                    for atom_idx, atom in enumerate(self.atoms):
-                        atom.count_diagonal_matrix_elements(
+                # print self.H
+                energies = eigvalsh(self.H)
+                output_f.write(' '.join(map(str, k) + map(str, energies)) +
+                               '\n')
+
+    def f_with_overlap(self):
+        self.find_nearest_neighbours()
+        self.assign_start_indexes_to_atoms()
+        with open(os.path.join(os.path.abspath('./outputs/'), self.name), 'w') \
+                as output_f:
+            for k in self.k_mesh:
+                self.H = zeros((self.H_matrix_dim,
+                                self.H_matrix_dim),
+                               dtype=complex_)
+                self.S = zeros((self.H_matrix_dim,
+                                self.H_matrix_dim),
+                               dtype=complex_)
+                for atom_idx, atom in enumerate(self.atoms):
+                    atom.count_diagonal_matrix_elements(
+                        self.parameters,
+                        self.H,
+                        mult=self.spin_multiplier)
+                    atom.count_diagonal_matrix_elements(
+                        self.s_parameters,
+                        self.S,
+                        mult=self.spin_multiplier)
+                    for neighbour_atom_idx, r in self.nn_dict[atom_idx]:
+                        neighbour_atom = self.atoms[neighbour_atom_idx]
+                        atom.count_hamiltonian_matrix_elements(
+                            neighbour_atom,
+                            r, k,
                             self.parameters,
                             self.H,
                             mult=self.spin_multiplier)
-                        atom.count_diagonal_matrix_elements(
+                        atom.count_hamiltonian_matrix_elements(
+                            neighbour_atom,
+                            r, k,
                             self.s_parameters,
                             self.S,
                             mult=self.spin_multiplier)
-                        for neighbour_atom_idx, r in self.nn_dict[atom_idx]:
-                            neighbour_atom = self.atoms[neighbour_atom_idx]
-                            atom.count_hamiltonian_matrix_elements(
-                                neighbour_atom,
-                                r, k,
-                                self.parameters,
-                                self.H,
-                                mult=self.spin_multiplier)
-                            atom.count_hamiltonian_matrix_elements(
-                                neighbour_atom,
-                                r, k,
-                                self.s_parameters,
-                                self.S,
-                                mult=self.spin_multiplier)
-                    # print self.H
-                    energies = eigvalsh(self.H, b=self.S)
-                    output_f.write(' '.join(map(str, k) + map(str, energies)) +
-                                   '\n')
-            elif self.with_eigenvectors:
-                for k in self.k_mesh:
-                    self.H = zeros((self.H_matrix_dim,
-                                    self.H_matrix_dim),
-                                   dtype=complex_)
-                    for atom_idx, atom in enumerate(self.atoms):
-                        atom.count_diagonal_matrix_elements(
+                # print self.H
+                energies = eigvalsh(self.H, b=self.S)
+                output_f.write(' '.join(map(str, k) + map(str, energies)) +
+                               '\n')
+
+    def f_with_vectors(self):
+        self.find_nearest_neighbours()
+        self.assign_start_indexes_to_atoms()
+        states_file_path = os.path.join(os.path.abspath('./outputs/'),
+                                        self.name + '_states')
+        energies_file_path = os.path.join(os.path.abspath('./outputs/'), self.name)
+        with open(energies_file_path, 'w') as output_f, \
+                open(states_file_path, 'w') as output_vector_f:
+            output_vector_f.write(str(self.num_of_bands) + '\n')
+            output_vector_f.write(' '.join(
+                [str(i) + at.name + orb
+                 for i, at in enumerate(self.atoms)
+                 for orb in at.orbitals]) + '\n')
+            for k in self.k_mesh:
+                self.H = zeros((self.H_matrix_dim,
+                                self.H_matrix_dim),
+                               dtype=complex_)
+                for atom_idx, atom in enumerate(self.atoms):
+                    atom.count_diagonal_matrix_elements(
+                        self.parameters,
+                        self.H,
+                        mult=self.spin_multiplier)
+                    for neighbour_atom_idx, r in self.nn_dict[atom_idx]:
+                        neighbour_atom = self.atoms[neighbour_atom_idx]
+                        atom.count_hamiltonian_matrix_elements(
+                            neighbour_atom,
+                            r, k,
                             self.parameters,
                             self.H,
                             mult=self.spin_multiplier)
-                        for neighbour_atom_idx, r in self.nn_dict[atom_idx]:
-                            neighbour_atom = self.atoms[neighbour_atom_idx]
-                            atom.count_hamiltonian_matrix_elements(
-                                neighbour_atom,
-                                r, k,
-                                self.parameters,
-                                self.H,
-                                mult=self.spin_multiplier)
-                    # print self.H
-                    energies, vectors = eigsh(self.H, self.num_of_bands,
-                                              sigma=0.)
-                    output_f.write(' '.join(map(str, k) +
-                                            map(str, sorted(energies))) + '\n')
+                # print self.H
+                energies, vectors = eigsh(self.H, self.num_of_bands,
+                                          sigma=0.)
+                vectors = absolute(vectors)
+                output_f.write(' '.join(map(str, k) +
+                                        map(str, sorted(energies))) + '\n')
+                for vec in transpose(vectors):
+                    print ' '.join(map(str, vec))
+                    output_vector_f.write(' '.join(map(str, vec)) + '\n')
