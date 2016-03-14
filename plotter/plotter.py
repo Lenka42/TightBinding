@@ -31,6 +31,6 @@ class Plotter(object):
         for band in energies:
             plt.plot(x, band)
             plt.savefig(os.path.join(os.path.abspath('./output_images/'),
-                                     self.input_file + '.eps'))
+                                     self.input_file + '.png'))
         plt.show()
 

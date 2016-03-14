@@ -8,7 +8,7 @@ a = 1.
 
 system = System([a / 2. * array([1., 1., 0.]),
                  a / 2. * array([0., 1., 1.]),
-                 a / 2. * array([1., 0., 1.])])
+                 a / 2. * array([1., 0., 1.])], mode="standard")
 system.name = 'diamond_sp'
 system.atoms = [Atom('C', array([0., 0., 0.])),
                 Atom('C', a / 4. * array([1., 1., 1.])),

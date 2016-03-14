@@ -7,7 +7,7 @@ from plotter.plotter import Plotter
 a = 3.12
 c = 3.11
 system = System([a / 2. * array([1., sqrt(3), 0.]),
-                 a / 2. * array([- 1., sqrt(3), 0.])])
+                 a / 2. * array([- 1., sqrt(3), 0.])], mode="with_overlap")
 system.name = 'mos2_mono_soc_S'
 system.atoms = [Atom('Mo', array([0., a / sqrt(3), 0.])),
                 Atom('S', array([0., 2 * a / sqrt(3), c / 2.])),
@@ -143,7 +143,6 @@ system.s_parameters = {
         'Vddd': 0.0432,
     }
 }
-system.orthogonal_orbitals = False
 
 for i in xrange(len(system.atoms)):
     system.atoms[i].orbitals = ['s', 'px', 'py', 'pz', 'dxy', 'dyz', 'dxz',

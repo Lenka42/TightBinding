@@ -36,10 +36,16 @@ class System(object):
         alpha = 1.5
         atom_lst = [(i, a.r) for i, a in enumerate(self.atoms)]
         big_atom_lst = [(i, a.r) for i, a in enumerate(self.atoms)]
-        for tr_idx, translation in enumerate(self.vectors):
-            for at_idx, atom in enumerate(self.atoms):
-                big_atom_lst.extend([(at_idx, atom.r + translation),
-                                     (at_idx, atom.r - translation)])
+        # for tr_idx, translation in enumerate(self.vectors):
+        #     for at_idx, atom in enumerate(self.atoms):
+        #         big_atom_lst.extend([(at_idx, atom.r + translation),
+        #                              (at_idx, atom.r - translation)])
+        for i in xrange(-1, 2):
+            for j in xrange(-1,2):
+                if not (i == 0 and j == 0):
+                    for at_idx, atom in enumerate(self.atoms):
+                        big_atom_lst.append((at_idx, atom.r + i * self.vectors[0] +
+                                             j * self.vectors[1]))
 
         min_dst = 100000
         for at_idx, v in atom_lst:
@@ -50,7 +56,7 @@ class System(object):
                 # if at != at_idx:
                 if norm(v - vec) <= alpha * min_dst and norm(v - vec) != 0.0:
                     self.nn_dict[at_idx].append((at, vec - v))
-        #print self.nn_dict
+        print self.nn_dict
 
     def assign_start_indexes_to_atoms(self):
         start_idx = 0

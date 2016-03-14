@@ -6,8 +6,8 @@ from plotter.plotter import Plotter
 ##########################GRAPHENE_WITH SOC###################################
 a = 1.
 system = System([a / 2. * array([1., sqrt(3), 0.]),
-                 a / 2. * array([- 1., sqrt(3), 0.])])
-system.name = 'graphene_soc'
+                 a / 2. * array([- 1., sqrt(3), 0.])], mode="standard")
+system.name = 'graphene_pd_soc3'
 system.atoms = [Atom('C', array([0., a / sqrt(3), 0.])),
                 Atom('C', array([0., 2 * a / sqrt(3), 0.])),
                 ]
@@ -36,7 +36,7 @@ system.parameters = {
 
 
 for i in xrange(len(system.atoms)):
-    system.atoms[i].orbitals = ['pz', 'dxz', 'dyz']
+    system.atoms[i].orbitals = ['pz', 'dxy', 'dyz', 'dxz']#, 'dx2-y2', 'dz2']
 
 
 system.just_do_main_magic()
