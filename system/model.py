@@ -78,6 +78,7 @@ class System(object):
             n_loc = int(norm(second - first) / approximate_delta)
             delta_k = (second - first) / n_loc
             loc_k_mesh = [first + i * delta_k for i in range(0, n_loc)]
+            print len(self.k_mesh), first
             self.k_mesh += loc_k_mesh
         #print len(self.k_mesh)
 

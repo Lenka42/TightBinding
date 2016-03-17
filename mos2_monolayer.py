@@ -8,7 +8,7 @@ a = 3.12
 c = 3.11
 system = System([a / 2. * array([1., sqrt(3), 0.]),
                  a / 2. * array([- 1., sqrt(3), 0.])], mode="with_overlap")
-system.name = 'mos2_mono_soc_S'
+system.name = 'mos2_mono_SOC_S_1j'
 system.atoms = [Atom('Mo', array([0., a / sqrt(3), 0.])),
                 Atom('S', array([0., 2 * a / sqrt(3), c / 2.])),
                 Atom('S', array([0., 2 * a / sqrt(3), - c / 2.])),
@@ -18,7 +18,7 @@ system.k_points = [array([0., 0., 0.]),
                    array([pi / a, -pi / sqrt(3) / a, 0]),
                    array([4 * pi / 3 / a, 0, 0]),
                    array([0., 0., 0.])]
-system.make_k_mesh(100)
+system.make_k_mesh(200)
 system.parameters = {
     'S': {
         'es': 7.6595,
