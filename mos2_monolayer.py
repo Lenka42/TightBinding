@@ -8,7 +8,7 @@ a = 3.12
 c = 3.11
 system = System([a / 2. * array([1., sqrt(3), 0.]),
                  a / 2. * array([- 1., sqrt(3), 0.])], mode="with_overlap")
-system.name = 'mos2_mono_soc_S'
+system.name = 'mos2_mono_SOC_S_new'
 system.atoms = [Atom('Mo', array([0., a / sqrt(3), 0.])),
                 Atom('S', array([0., 2 * a / sqrt(3), c / 2.])),
                 Atom('S', array([0., 2 * a / sqrt(3), - c / 2.])),

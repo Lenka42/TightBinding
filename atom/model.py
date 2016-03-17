@@ -62,6 +62,22 @@ class Atom(object):
                 H[self.start_idx + dyz_idx * mult + 1,
                   self.start_idx + dxz_idx * mult + 1] = \
                     - parameters[self.name]['lambda']
+            if 'dxy' in self.orbitals and 'dx2-y2' in self.orbitals:
+                dxy_idx = self.orbitals.index('dxy')
+                dx2_y2_idx = self.orbitals.index('dx2-y2')
+                H[self.start_idx + dx2_y2_idx * mult,
+                  self.start_idx + dxy_idx * mult] = \
+                    - 2 * parameters[self.name]['lambda']
+                H[self.start_idx + dx2_y2_idx * mult + 1,
+                  self.start_idx + dxy_idx * mult + 1] = \
+                    2 * parameters[self.name]['lambda']
+                H[self.start_idx + dxy_idx * mult,
+                  self.start_idx + dx2_y2_idx * mult] = \
+                    2 * parameters[self.name]['lambda']
+                H[self.start_idx + dxy_idx * mult + 1,
+                  self.start_idx + dx2_y2_idx * mult + 1] = \
+                    - 2 * parameters[self.name]['lambda']
+
 
     def count_hamiltonian_matrix_elements(self, other, r, k, parameters, H, mult=1):
         params = parameters[self.name + other.name]
