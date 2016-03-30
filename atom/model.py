@@ -32,52 +32,52 @@ class Atom(object):
                   self.start_idx + idx * mult + 1] = \
                     parameters[self.name]['e' + orb[0]]
         if mult == 2:
+            lmbd = parameters[self.name]['lambda'] / 2.
             if 'px' in self.orbitals and 'py' in self.orbitals:
                 px_idx = self.orbitals.index('px')
                 py_idx = self.orbitals.index('py')
                 H[self.start_idx + px_idx * mult,
                   self.start_idx + py_idx * mult] = \
-                    - parameters[self.name]['lambda']
+                    - 1j * lmbd
                 H[self.start_idx + px_idx * mult + 1,
                   self.start_idx + py_idx * mult + 1] = \
-                    parameters[self.name]['lambda']
+                    1j * lmbd
                 H[self.start_idx + py_idx * mult,
                   self.start_idx + px_idx * mult] = \
-                    parameters[self.name]['lambda']
+                    1j * lmbd
                 H[self.start_idx + py_idx * mult + 1,
                   self.start_idx + px_idx * mult + 1] = \
-                    - parameters[self.name]['lambda']
+                    - 1j * lmbd
             if 'dxz' in self.orbitals and 'dyz' in self.orbitals:
                 dxz_idx = self.orbitals.index('dxz')
                 dyz_idx = self.orbitals.index('dyz')
                 H[self.start_idx + dxz_idx * mult,
                   self.start_idx + dyz_idx * mult] = \
-                    - parameters[self.name]['lambda']
+                    - 1j * lmbd
                 H[self.start_idx + dxz_idx * mult + 1,
                   self.start_idx + dyz_idx * mult + 1] = \
-                    parameters[self.name]['lambda']
+                    1j * lmbd
                 H[self.start_idx + dyz_idx * mult,
                   self.start_idx + dxz_idx * mult] = \
-                    parameters[self.name]['lambda']
+                    1j * lmbd
                 H[self.start_idx + dyz_idx * mult + 1,
                   self.start_idx + dxz_idx * mult + 1] = \
-                    - parameters[self.name]['lambda']
+                    - 1j * lmbd
             if 'dxy' in self.orbitals and 'dx2-y2' in self.orbitals:
                 dxy_idx = self.orbitals.index('dxy')
                 dx2_y2_idx = self.orbitals.index('dx2-y2')
                 H[self.start_idx + dx2_y2_idx * mult,
                   self.start_idx + dxy_idx * mult] = \
-                    - 2 * parameters[self.name]['lambda']
+                    - 2 * lmbd
                 H[self.start_idx + dx2_y2_idx * mult + 1,
                   self.start_idx + dxy_idx * mult + 1] = \
-                    2 * parameters[self.name]['lambda']
+                    2 * lmbd
                 H[self.start_idx + dxy_idx * mult,
                   self.start_idx + dx2_y2_idx * mult] = \
-                    2 * parameters[self.name]['lambda']
+                    2 * lmbd
                 H[self.start_idx + dxy_idx * mult + 1,
                   self.start_idx + dx2_y2_idx * mult + 1] = \
-                    - 2 * parameters[self.name]['lambda']
-
+                    - 2 * lmbd
 
     def count_hamiltonian_matrix_elements(self, other, r, k, parameters, H, mult=1):
         params = parameters[self.name + other.name]
