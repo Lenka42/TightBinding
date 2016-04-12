@@ -40,13 +40,19 @@ class System(object):
         #     for at_idx, atom in enumerate(self.atoms):
         #         big_atom_lst.extend([(at_idx, atom.r + translation),
         #                              (at_idx, atom.r - translation)])
-        for i in xrange(-1, 2):
-            for j in xrange(-1,2):
-                if not (i == 0 and j == 0):
-                    for at_idx, atom in enumerate(self.atoms):
-                        big_atom_lst.append((at_idx, atom.r + i * self.vectors[0] +
-                                             j * self.vectors[1]))
-
+        if len(self.vectors) == 2:
+            print "Finding neeighbos in 2D system"
+            for i in xrange(-1, 2):
+                for j in xrange(-1,2):
+                    if not (i == 0 and j == 0):
+                        for at_idx, atom in enumerate(self.atoms):
+                            big_atom_lst.append((at_idx, atom.r + i * self.vectors[0] +
+                                                 j * self.vectors[1]))
+        if len(self.vectors) == 1:
+            print "Finding neeighbos in 1D system"
+            for i in [-1, 1]:
+                for at_idx, atom in enumerate(self.atoms):
+                    big_atom_lst.append((at_idx, atom.r + i * self.vectors[0]))
         min_dst = 100000
         for at_idx, v in atom_lst:
             for at, vec in big_atom_lst:
@@ -80,6 +86,8 @@ class System(object):
             loc_k_mesh = [first + i * delta_k for i in range(0, n_loc)]
             print len(self.k_mesh), first
             self.k_mesh += loc_k_mesh
+            print len(self.k_mesh), self.k_mesh[-1]
+        self.k_mesh.append(second)
         #print len(self.k_mesh)
 
     def f(self):

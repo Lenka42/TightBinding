@@ -4,14 +4,14 @@ from numpy import array, sqrt, pi
 from plotter.plotter import Plotter
 
 ##########################GRAPHENE_WITH SOC###################################
-a = 1.
+a = 1. # unit vector length
 system = System([a / 2. * array([1., sqrt(3), 0.]),
                  a / 2. * array([- 1., sqrt(3), 0.])], mode="standard")
-system.name = 'graphene_pd_soc3'
+system.name = 'graphene_pd_new'
 system.atoms = [Atom('C', array([0., a / sqrt(3), 0.])),
                 Atom('C', array([0., 2 * a / sqrt(3), 0.])),
                 ]
-system.spin_multiplier = 2
+system.spin_multiplier = 1
 system.k_points = [array([0., 0., 0.]),
                    array([pi / a, -pi / sqrt(3) / a, 0]),
                    array([4 * pi / 3 / a, 0, 0]),
@@ -36,7 +36,7 @@ system.parameters = {
 
 
 for i in xrange(len(system.atoms)):
-    system.atoms[i].orbitals = ['pz', 'dxy', 'dyz', 'dxz']#, 'dx2-y2', 'dz2']
+    system.atoms[i].orbitals = ['pz', 'dxy', 'dyz', 'dxz', 'dx2-y2', 'dz2']
 
 
 system.just_do_main_magic()
