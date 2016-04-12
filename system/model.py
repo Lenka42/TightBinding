@@ -14,8 +14,8 @@ class System(object):
         'standard': 'f',
     }
 
-    def __init__(self, vectors, mode='standard'):
-        self.name = ''
+    def __init__(self, vectors, mode='standard', name=''):
+        self.name = name
         self.spin_multiplier = 1
         self.vectors = vectors
         self.atoms = None
@@ -30,6 +30,12 @@ class System(object):
         self.s_parameters = None
         self.num_of_bands = None
         self.just_do_main_magic = getattr(self, self._main_methods_dict[mode])
+        self.output_path = os.path.join(os.path.abspath('./outputs/'),
+                                        self.name)
+        print self.output_path
+        if not os.path.exists(self.output_path):
+            print self.output_path
+            os.makedirs(self.output_path)
 
     # TODO: cool k-d tree algorithm and second nearest neighbours
     def find_nearest_neighbours(self):
@@ -88,12 +94,13 @@ class System(object):
             self.k_mesh += loc_k_mesh
             print len(self.k_mesh), self.k_mesh[-1]
         self.k_mesh.append(second)
-        #print len(self.k_mesh)
+        with open(os.path.join(self.output_path, 'k_points'), 'w') as f:
+            f.write('\n'.join(' '.join(map(str, k)) for k in self.k_mesh))
 
     def f(self):
         self.find_nearest_neighbours()
         self.assign_start_indexes_to_atoms()
-        with open(os.path.join(os.path.abspath('./outputs/'), self.name), 'w') \
+        with open(os.path.join(self.output_path, 'energies'), 'w') \
                 as output_f:
             for k in self.k_mesh:
                 self.H = zeros((self.H_matrix_dim,
@@ -114,14 +121,12 @@ class System(object):
                             mult=self.spin_multiplier)
                 # print self.H
                 energies = eigvalsh(self.H)
-                output_f.write(' '.join(map(str, k) + map(str, energies)) +
-                               '\n')
+                output_f.write(' '.join(map(str, energies)) + '\n')
 
     def f_with_overlap(self):
         self.find_nearest_neighbours()
         self.assign_start_indexes_to_atoms()
-        with open(os.path.join(os.path.abspath('./outputs/'), self.name), 'w') \
-                as output_f:
+        with open(os.path.join(self.output_path, 'energies'), 'w') as output_f:
             for k in self.k_mesh:
                 self.H = zeros((self.H_matrix_dim,
                                 self.H_matrix_dim),
@@ -154,15 +159,13 @@ class System(object):
                             mult=self.spin_multiplier)
                 # print self.H
                 energies = eigvalsh(self.H, b=self.S)
-                output_f.write(' '.join(map(str, k) + map(str, energies)) +
-                               '\n')
+                output_f.write(' '.join(map(str, energies)) + '\n')
 
     def f_with_vectors(self):
         self.find_nearest_neighbours()
         self.assign_start_indexes_to_atoms()
-        states_file_path = os.path.join(os.path.abspath('./outputs/'),
-                                        self.name + '_states')
-        energies_file_path = os.path.join(os.path.abspath('./outputs/'), self.name)
+        states_file_path = os.path.join(self.output_path, 'states')
+        energies_file_path = os.path.join(self.output_path, 'energies')
         with open(energies_file_path, 'w') as output_f, \
                 open(states_file_path, 'w') as output_vector_f:
             output_vector_f.write(str(self.num_of_bands) + '\n')
@@ -191,8 +194,7 @@ class System(object):
                 energies, vectors = eigsh(self.H, self.num_of_bands,
                                           sigma=0.)
                 vectors = absolute(vectors)
-                output_f.write(' '.join(map(str, k) +
-                                        map(str, sorted(energies))) + '\n')
+                output_f.write(' '.join(map(str, sorted(energies))) + '\n')
                 for vec in transpose(vectors):
                     print ' '.join(map(str, vec))
                     output_vector_f.write(' '.join(map(str, vec)) + '\n')
