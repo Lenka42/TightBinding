@@ -1,7 +1,6 @@
 from numpy import zeros, complex_, absolute, transpose
-from numpy.linalg import norm
+from numpy.linalg import norm, eigh
 from scipy.linalg import eigvalsh
-from scipy.sparse.linalg import eigsh
 from collections import defaultdict
 from itertools import izip
 import os
@@ -168,7 +167,7 @@ class System(object):
         energies_file_path = os.path.join(self.output_path, 'energies')
         with open(energies_file_path, 'w') as output_f, \
                 open(states_file_path, 'w') as output_vector_f:
-            output_vector_f.write(str(self.num_of_bands) + '\n')
+            output_vector_f.write(str(self.H_matrix_dim) + '\n')
             output_vector_f.write(' '.join(
                 [str(i) + at.name + orb
                  for i, at in enumerate(self.atoms)
@@ -191,10 +190,10 @@ class System(object):
                             self.H,
                             mult=self.spin_multiplier)
                 # print self.H
-                energies, vectors = eigsh(self.H, self.num_of_bands,
-                                          sigma=0.)
+                energies, vectors = eigh(self.H)
                 vectors = absolute(vectors)
-                output_f.write(' '.join(map(str, sorted(energies))) + '\n')
+                output_f.write(' '.join(map(str, energies)) + '\n')
                 for vec in transpose(vectors):
-                    print ' '.join(map(str, vec))
+                    vec = absolute(vec)**2
+                    vec = vec / norm(vec)
                     output_vector_f.write(' '.join(map(str, vec)) + '\n')

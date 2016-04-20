@@ -7,9 +7,9 @@ from copy import deepcopy
 
 ######################ZigZag_GRAPHENE_ribbon_WITH DOS##########################
 a = 1. # C-C bond length
-n = 2
-system = System([array([a * sqrt(3), 0., 0.])], mode="standard",
-                name='zz_ribbon_{}_pz'.format(n))
+n = 1
+system = System([array([a * sqrt(3), 0., 0.])], mode="with_vectors",
+                name='zz_ribbon_{}_pz_ldos'.format(n))
 system.atoms = [Atom('C', array([0., 0., 0.])),
                 Atom('C', array([a * sqrt(3) / 2., a / 2., 0.])),
                 Atom('C', array([a * sqrt(3) / 2., 3 * a / 2., 0.])),
@@ -22,7 +22,7 @@ for i in range(1, n):
         new_atom = deepcopy(atom)
         new_atom.r = new_atom.r + i * shift_r
         system.atoms.append(new_atom)
-system.spin_multiplier = 2
+system.spin_multiplier = 1
 system.k_points = [array([- pi / sqrt(3) / a, 0., 0.]),
                    array([0., 0., 0.]),
                    array([pi / sqrt(3) / a, 0, 0]),
@@ -53,5 +53,5 @@ for i in xrange(len(system.atoms)):
 system.just_do_main_magic()
 plt = Plotter(system.name)
 plt.new_plot_energy_bands_from_file()
-doser = DOSCalculator(system.dim, system.name, 200)
+doser = DOSCalculator(1, system.name, 200)
 doser.f()
