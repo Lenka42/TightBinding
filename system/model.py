@@ -93,12 +93,12 @@ class System(object):
             self.k_mesh += loc_k_mesh
             print len(self.k_mesh), self.k_mesh[-1]
         self.k_mesh.append(second)
-        with open(os.path.join(self.output_path, 'k_points'), 'w') as f:
-            f.write('\n'.join(' '.join(map(str, k)) for k in self.k_mesh))
 
     def f(self):
         self.find_nearest_neighbours()
         self.assign_start_indexes_to_atoms()
+        with open(os.path.join(self.output_path, 'k_points'), 'w') as f:
+            f.write('\n'.join(' '.join(map(str, k)) for k in self.k_mesh))
         with open(os.path.join(self.output_path, 'energies'), 'w') \
                 as output_f:
             for k in self.k_mesh:
@@ -125,6 +125,8 @@ class System(object):
     def f_with_overlap(self):
         self.find_nearest_neighbours()
         self.assign_start_indexes_to_atoms()
+        with open(os.path.join(self.output_path, 'k_points'), 'w') as f:
+            f.write('\n'.join(' '.join(map(str, k)) for k in self.k_mesh))
         with open(os.path.join(self.output_path, 'energies'), 'w') as output_f:
             for k in self.k_mesh:
                 self.H = zeros((self.H_matrix_dim,
@@ -165,6 +167,8 @@ class System(object):
         self.assign_start_indexes_to_atoms()
         states_file_path = os.path.join(self.output_path, 'states')
         energies_file_path = os.path.join(self.output_path, 'energies')
+        with open(os.path.join(self.output_path, 'k_points'), 'w') as f:
+            f.write('\n'.join(' '.join(map(str, k)) for k in self.k_mesh))
         with open(energies_file_path, 'w') as output_f, \
                 open(states_file_path, 'w') as output_vector_f:
             output_vector_f.write(str(self.H_matrix_dim) + '\n')

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 from scipy import sqrt, pi, exp
-from scipy.integrate import quad
+from scipy.integrate import quad, nquad
 from scipy.interpolate import interp1d, LinearNDInterpolator
 from itertools import izip
 sqrt_pi = sqrt(pi)
@@ -66,6 +66,13 @@ class DOSCalculator(object):
         max_en = np.amax(energies)
         self.en_mesh = np.linspace(min_en, max_en, self.en_num)
         self.a = (max_en - min_en) / self.en_num
+
+        def bounds_kx():
+            return [0, 2 * pi]
+
+        def bounds_ky(kx):
+            return [kx / sqrt(3), kx / sqrt(3) + 4 * pi / sqrt(3)]
+
         with open(os.path.join(os.path.abspath('./outputs/'),
                                self.name, 'k_points')) as f:
             lines = f.readlines()
@@ -74,9 +81,10 @@ class DOSCalculator(object):
         for band in energies:
             en_on_k = LinearNDInterpolator(self.k_points, band)
             for i, en in enumerate(self.en_mesh):
-                dos = quad(lambda k: 1 / self.a / sqrt_pi *
-                                     exp(- (en_on_k(k) - en) ** 2 / self.a ** 2),
-                           self.k_points[0], self.k_points[-1])
+                def f(ky, kx):
+                    return 1 / self.a / sqrt_pi * \
+                           exp(- (en_on_k(kx, ky) - en) ** 2 / self.a ** 2)
+                dos = nquad(f, [bounds_ky, bounds_kx])
                 self.dos[i] += dos[0]
         with open(os.path.join(self.output_path, 'dos'), 'w') as f:
             f.write('\n'.join(' '.join(map(str, pair)) for pair in
