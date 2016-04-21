@@ -17,7 +17,7 @@ system.k_points = [array([0., 0., 0.]),
                    array([4 * pi / 3 / a, 0, 0]),
                    array([0., 0., 0.])]
 #system.make_k_mesh(100)
-nx = 10
+nx = 50
 ny = int(2 / sqrt(3) * nx)
 dx = 2 * pi / a / nx
 dy = 4 * pi / sqrt(3) / a / ny
@@ -57,6 +57,6 @@ for i in xrange(len(system.atoms)):
 
 
 system.just_do_main_magic()
-doser = DOSCalculator(system.dim, system.name, 100)
+doser = DOSCalculator(system.dim, system.name, 200)
 doser.f()
 

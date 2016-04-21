@@ -85,6 +85,7 @@ class DOSCalculator(object):
                     return 1 / self.a / sqrt_pi * \
                            exp(- (en_on_k(kx, ky) - en) ** 2 / self.a ** 2)
                 dos = nquad(f, [bounds_ky, bounds_kx])
+                print dos
                 self.dos[i] += dos[0]
         with open(os.path.join(self.output_path, 'dos'), 'w') as f:
             f.write('\n'.join(' '.join(map(str, pair)) for pair in
