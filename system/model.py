@@ -171,11 +171,6 @@ class System(object):
             f.write('\n'.join(' '.join(map(str, k)) for k in self.k_mesh))
         with open(energies_file_path, 'w') as output_f, \
                 open(states_file_path, 'w') as output_vector_f:
-            output_vector_f.write(str(self.H_matrix_dim) + '\n')
-            output_vector_f.write(' '.join(
-                [str(i) + at.name + orb
-                 for i, at in enumerate(self.atoms)
-                 for orb in at.orbitals]) + '\n')
             for k in self.k_mesh:
                 self.H = zeros((self.H_matrix_dim,
                                 self.H_matrix_dim),
@@ -198,6 +193,14 @@ class System(object):
                 vectors = absolute(vectors)
                 output_f.write(' '.join(map(str, energies)) + '\n')
                 for vec in transpose(vectors):
-                    vec = absolute(vec)**2
-                    vec = vec / norm(vec)
+                    vec = absolute(vec)
+                    vec = (vec / norm(vec)) ** 2
                     output_vector_f.write(' '.join(map(str, vec)) + '\n')
+
+    def find_indeces_for_ldos(self, atom_idx=None, orbital=None):
+        if atom_idx:
+            atom = self.atoms[atom_idx]
+            return [atom.start_idx + i for i in range(len(atom.orbitals))]
+        elif orbital:
+            return [at.orbitals.index(orbital) for at in self.atoms
+                    if orbital in at.orbitals]

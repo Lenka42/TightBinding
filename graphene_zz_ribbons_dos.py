@@ -2,14 +2,14 @@ from atom.model import Atom
 from system.model import System
 from numpy import array, sqrt, pi
 from plotter.plotter import Plotter
-from dos.dos_calculator import DOSCalculator
+from dos.dos_calculator import DOSCalculator, LDOSCalculator
 from copy import deepcopy
 
 ######################ZigZag_GRAPHENE_ribbon_WITH DOS##########################
 a = 1. # C-C bond length
-n = 2
-system = System([array([a * sqrt(3), 0., 0.])], mode="standard",
-                name='zz_ribbon_{}_pz'.format(n))
+n = 1
+system = System([array([a * sqrt(3), 0., 0.])], mode="with_vectors",
+                name='zz_ribbon_ldos_{}_pz'.format(n))
 system.atoms = [Atom('C', array([0., 0., 0.])),
                 Atom('C', array([a * sqrt(3) / 2., a / 2., 0.])),
                 Atom('C', array([a * sqrt(3) / 2., 3 * a / 2., 0.])),
@@ -51,7 +51,8 @@ for i in xrange(len(system.atoms)):
 
 
 system.just_do_main_magic()
+idx_lst = system.find_indeces_for_ldos(atom_idx=0)
 plt = Plotter(system.name)
 plt.new_plot_energy_bands_from_file()
-doser = DOSCalculator(system.dim, system.name, 200)
+doser = LDOSCalculator(system.dim, system.name, 200, 0, indeces_list=[0])
 doser.f()
