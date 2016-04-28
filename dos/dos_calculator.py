@@ -116,20 +116,20 @@ class LDOSCalculator(object):
 
     def get_coefficients(self, band_idx):
         coefficients = []
-        with open(os.path.join(self.output_path, 'states')) as f:
+        with open(os.path.join(self.output_path, 'states'), 'r') as f:
             lines = f.readlines()
-            dim = len[lines[0]]
+            dim = len(lines[0].strip().split())
             for line in lines[band_idx::dim]:
-                lst = map(float, ' '.split(line))
+                lst = np.array(map(float, line.strip().split()))
                 coefficients.append(sum(lst[i] for i in self.indeces))
         return coefficients
 
     def f1d(self):
-        with open(os.path.join(self.output_path, 'k_points')) as f:
+        with open(os.path.join(self.output_path, 'k_points'), 'r') as f:
             lines = f.readlines()
             self.k_points = np.array([float(line.strip().split()[0])
                                       for line in lines])
-        with open(os.path.join(self.output_path, 'energies')) as f:
+        with open(os.path.join(self.output_path, 'energies'), 'r') as f:
             lines = f.readlines()
             energies = np.array([map(float, line.strip().split())
                                  for line in lines])
@@ -139,6 +139,7 @@ class LDOSCalculator(object):
         self.en_mesh = np.linspace(min_en, max_en, self.en_num)
         for band_idx, band in enumerate(energies):
             en_on_k = interp1d(self.k_points, band)
+            print len(self.k_points), len(self.get_coefficients(band_idx))
             c_on_k = interp1d(self.k_points, self.get_coefficients(band_idx))
             for i, en in enumerate(self.en_mesh):
                 dos = quad(lambda k: c_on_k(k) * 1 / self.a / sqrt_pi *

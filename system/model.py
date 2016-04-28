@@ -196,3 +196,11 @@ class System(object):
                     vec = absolute(vec)
                     vec = (vec / norm(vec)) ** 2
                     output_vector_f.write(' '.join(map(str, vec)) + '\n')
+
+    def find_indeces_for_ldos(self, atom_idx=None, orbital=None):
+        if atom_idx:
+            atom = self.atoms[atom_idx]
+            return [atom.start_idx + i for i in range(len(atom.orbitals))]
+        elif orbital:
+            return [at.orbitals.index(orbital) for at in self.atoms
+                    if orbital in at.orbitals]
