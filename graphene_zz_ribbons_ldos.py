@@ -7,7 +7,7 @@ from copy import deepcopy
 
 ######################ZigZag_GRAPHENE_ribbon_WITH DOS##########################
 a = 1. # C-C bond length
-n = 1
+n = 5
 system = System([array([a * sqrt(3), 0., 0.])], mode="with_vectors",
                 name='zz_ribbon_{}_pz_ldos'.format(n))
 system.atoms = [Atom('C', array([0., 0., 0.])),

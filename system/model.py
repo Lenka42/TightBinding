@@ -31,9 +31,7 @@ class System(object):
         self.just_do_main_magic = getattr(self, self._main_methods_dict[mode])
         self.output_path = os.path.join(os.path.abspath('./outputs/'),
                                         self.name)
-        print self.output_path
         if not os.path.exists(self.output_path):
-            print self.output_path
             os.makedirs(self.output_path)
 
     # TODO: cool k-d tree algorithm and second nearest neighbours
@@ -203,5 +201,10 @@ class System(object):
             print [atom.start_idx + i for i in range(len(atom.orbitals))]
             return [atom.start_idx + i for i in range(len(atom.orbitals))]
         elif orbital is not None:
-            return [at.orbitals.index(orbital) for at in self.atoms
-                    if orbital in at.orbitals]
+            result = []
+            for atom in self.atoms:
+                for orb in atom.orbitals:
+                    if orb[0] == orbital:
+                        result.append(atom.start_idx + atom.orbitals.index(orb))
+            print result
+            return result

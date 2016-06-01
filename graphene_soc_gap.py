@@ -1,21 +1,25 @@
 from atom.model import Atom
 from system.model import System
 from numpy import array, sqrt, pi
+from numpy.linalg import norm
 from plotter.plotter import Plotter
 
 ##########################GRAPHENE_WITH SOC###################################
 a = 1. # unit vector length
 system = System([a / 2. * array([1., sqrt(3), 0.]),
                  a / 2. * array([- 1., sqrt(3), 0.])],
-                mode="with_vectors", name='graphene_pd_soc')
+                mode="standard", name='graphene_pd_soc_gap')
 system.atoms = [Atom('C', array([0., a / sqrt(3), 0.])),
                 Atom('C', array([0., 2 * a / sqrt(3), 0.])),
                 ]
 system.spin_multiplier = 2
-system.k_points = [array([0., 0., 0.]),
-                   array([pi / a, -pi / sqrt(3) / a, 0]),
-                   array([4 * pi / 3 / a, 0, 0]),
-                   array([0., 0., 0.])]
+distanse = 0.1
+k_point = array([4 * pi / 3 / a, 0, 0])
+l_point = array([pi / a, -pi / sqrt(3) / a, 0])
+g_point = array([0, 0, 0])
+l_side = k_point + (l_point - k_point) / norm(l_point - k_point) * distanse
+g_side = k_point + (g_point - k_point) / norm(g_point - k_point) * distanse
+system.k_points = [l_side, k_point, g_side]
 system.make_k_mesh(200)
 system.parameters = {
     'C': {
