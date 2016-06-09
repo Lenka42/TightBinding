@@ -42,9 +42,9 @@ plotter.new_plot_energy_bands_from_file()
 with open(os.path.join(os.path.abspath('./outputs/'), system.name,
                        'analytical_energies'), 'w') as output_f:
     for k in system.k_mesh:
-        energy = t * sqrt(3 + 2 * cos(sqrt(3) * k[1] * d) +
-                          4 * cos(sqrt(3) / 2 * k[1] * d) *
-                          cos(3 / 2 * k[0] * d))
+        energy = t * sqrt(3. + 2. * cos(sqrt(3.) * k[1] * d) +
+                          4. * cos(sqrt(3.) / 2. * k[1] * d) *
+                          cos(3. / 2. * k[0] * d))
         energies = [- energy, energy]
         output_f.write(' '.join(map(str, energies)) + '\n')
 
