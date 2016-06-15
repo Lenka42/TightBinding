@@ -30,6 +30,6 @@ for i in xrange(len(system.atoms)):
 
 system.just_do_main_magic()
 plt = Plotter(system.name)
-plt.new_plot_energy_bands_from_file()
+plt.plot_energy_bands_from_file()
 doser = DOSCalculator(system.dim, system.name, 70)
 doser.f()

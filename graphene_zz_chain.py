@@ -3,10 +3,11 @@ from system.model import System
 from numpy import array, sqrt, linspace, zeros, exp, pi
 import matplotlib.pyplot as plt
 import os
+from itertools import izip
 
 a = 1. # C-C bond length
 n = 2
-length = 100
+length = 2
 system = System([], mode="with_vectors",
                 name='zz_chain_{}_pz'.format(length))
 system.atoms = []
@@ -59,8 +60,9 @@ for en in energies:
         dos = 1 / a / sqrt(pi) * exp(- (point - en)**2 / a**2)
         smoothed[i] += dos
 with open(os.path.join(os.path.abspath('./outputs/'), system.name,
-                       'smoothed'), 'w') as output:
-    output.write(smoothed)
+                       'smoothed'), 'w') as f:
+    f.write('\n'.join(' '.join(map(str, pair)) for pair in
+                              izip(en_mesh, smoothed)))
 plt.plot(en_mesh, smoothed)
 plt.savefig(os.path.join(os.path.abspath('./outputs/'),
                          system.name, 'smoothed.eps'))

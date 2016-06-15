@@ -36,7 +36,7 @@ for i in xrange(len(system.atoms)):
 
 system.just_do_main_magic()
 plotter = Plotter(system.name)
-plotter.new_plot_energy_bands_from_file()
+plotter.plot_energy_bands_from_file()
 
 # plot with analytical functions
 with open(os.path.join(os.path.abspath('./outputs/'), system.name,

@@ -49,7 +49,7 @@ system.just_do_main_magic()
 lst = system.find_indeces_for_ldos(orbital='d')
 print lst
 plt = Plotter(system.name)
-plt.new_plot_energy_bands_from_file()
+plt.plot_energy_bands_from_file()
 
 doser = LDOSCalculator(system.dim, system.name, 500, 0, indeces_list=lst)
 doser.f()
