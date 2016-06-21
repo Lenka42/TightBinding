@@ -17,7 +17,7 @@ system.k_points = [array([0., 0., 0.]),
                    array([4 * pi / 3 / a, 0, 0]),
                    array([0., 0., 0.])]
 #system.make_k_mesh(100)
-nx = 50
+nx = 40
 ny = int(2 / sqrt(3) * nx)
 dx = 2 * pi / a / nx
 dy = 4 * pi / sqrt(3) / a / ny
@@ -26,28 +26,10 @@ for kx in linspace(0, 2 * pi /a, nx):
         system.k_mesh.append(array([kx, ky, 0.]))
 system.parameters = {
     'C': {
-        'es': 8.370,
-        'ep': 0.0,
+        'ep': 0.,
     },
     'CC': {
-        'Vsss': -5.729,
-        'Vsps': 5.618,
-        'Vppp': 6.050,
-        'Vpps': -3.070
-    }
-}
-system.s_parameters = {
-    'C': {
-        'es': 1.,
-        'ep': 1.,
-        'ed': 1.,
-        'lambda': 0,
-    },
-    'CC': {
-        'Vsss': 0.102,
-        'Vsps': - 0.171,
-        'Vppp': -0.377,
-        'Vpps': 0.070
+        'Vppp': -3.26,
     }
 }
 

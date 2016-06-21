@@ -6,10 +6,10 @@ import os
 from itertools import izip
 
 a = 1. # C-C bond length
-n = 2
-length = 2
-system = System([], mode="with_vectors",
-                name='zz_chain_{}_pz'.format(length))
+n = 50
+length = 100
+system = System([], mode="standard",
+                name='zz_chain_{}_{}_pz'.format(n, length))
 system.atoms = []
 for j in range(length):
     for i in range(n):

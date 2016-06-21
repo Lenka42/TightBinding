@@ -7,7 +7,7 @@ from copy import deepcopy
 ######################ZigZag_GRAPHENE_ribbon_WITH SOC##########################
 a = 1. # C-C bond length
 n = 1
-system = System([array([a * sqrt(3), 0., 0.])], mode="with_vectors",
+system = System([array([a * sqrt(3), 0., 0.])], mode="standard",
                 name="zz_ribbon_states_{}".format(n))
 system.atoms = [Atom('C', array([0., 0., 0.])),
                 Atom('C', array([a * sqrt(3) / 2., a / 2., 0.])),
@@ -22,9 +22,9 @@ for i in range(1, n):
         new_atom.r = new_atom.r + i * shift_r
         system.atoms.append(new_atom)
 system.spin_multiplier = 1
-system.k_points = [array([- pi / sqrt(3) / a, 0., 0.]),
-                   array([0., 0., 0.]),
+system.k_points = [array([0., 0., 0.]),
                    array([pi / sqrt(3) / a, 0, 0]),
+                   array([2 * pi / sqrt(3) / a, 0., 0.]),
                    ]
 system.make_k_mesh(150)
 system.parameters = {
